@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import catchAsyncError from "../middlewares/catchAsyncErrors";
 import User from "../models/user.model";
+import { ITokenUser } from "../types/jwtAuth";
 import { createAcessToken } from "../utils/jwtToken";
 export const registerUserController = catchAsyncError(
   async (req, res, next) => {
@@ -27,9 +28,9 @@ export const registerUserController = catchAsyncError(
       work_phone,
     });
 
-    const tokenPayload = {
+    const tokenPayload: ITokenUser = {
       email: user.email,
-      userId: user._id,
+      userId: user._id.toString(),
     };
 
     const accessToken = createAcessToken(tokenPayload, "7d");
@@ -64,9 +65,9 @@ export const signinController = catchAsyncError(async (req, res, next) => {
       data: null,
     });
   }
-  const tokenPayload = {
+  const tokenPayload: ITokenUser = {
     email: user.email,
-    userId: user._id,
+    userId: user._id.toString(),
   };
 
   const accessToken = createAcessToken(tokenPayload, "1h");
@@ -81,5 +82,3 @@ export const signinController = catchAsyncError(async (req, res, next) => {
     accessToken,
   });
 });
-
-

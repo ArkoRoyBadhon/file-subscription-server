@@ -13,6 +13,8 @@ const userSchema = new mongoose.Schema({
     ref: "purchasedPlan",
   },
   planDate: { type: Date, required: false },
+}  ,{
+  timestamps: true,
 });
 
 const User = mongoose.model("User", userSchema);
