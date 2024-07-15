@@ -1,0 +1,102 @@
+// components/LenderForm.tsx
+import React, { useState } from 'react';
+import { useFormik, FormikProvider, FieldArray, Form, Field } from 'formik';
+import * as Yup from 'yup';
+
+interface Lender {
+  lender: string;
+  outstandingBalance: number;
+  contributes: number;
+}
+
+const validationSchema = Yup.object({
+  lenders: Yup.array()
+    .of(
+      Yup.object({
+        lender: Yup.string().required('Lender is required'),
+        outstandingBalance: Yup.number().required('Outstanding balance is required').min(0),
+        contributes: Yup.number().required('Contribution is required').min(0),
+      })
+    )
+    .required('Must have lenders')
+    .min(1, 'Minimum of 1 lender')
+    .max(3, 'Maximum of 3 lenders'),
+});
+
+const LenderForm = () => {
+  const formik = useFormik({
+    initialValues: {
+      lenders: [
+        {
+          lender: '',
+          outstandingBalance: 0,
+          contributes: 0,
+        },
+      ],
+    },
+    validationSchema,
+    onSubmit: (values) => {
+      console.log(values);
+    },
+  });
+
+  return (
+    <FormikProvider value={formik}>
+      <Form>
+        <FieldArray
+          name="lenders"
+          render={(arrayHelpers) => (
+            <div>
+              {formik.values.lenders.map((_, index) => (
+                <div key={index}>
+                  <div>
+                    <label>Lender {index + 1}</label>
+                    <Field name={`lenders[${index}].lender`} />
+                    {formik.errors.lenders && formik.errors.lenders[index]?.lender && (
+                      <div>{formik.errors.lenders[index]?.lender}</div>
+                    )}
+                  </div>
+                  <div>
+                    <label>Outstanding Balance</label>
+                    <Field type="number" name={`lenders[${index}].outstandingBalance`} />
+                    {formik.errors.lenders && formik.errors.lenders[index]?.outstandingBalance && (
+                      <div>{formik.errors.lenders[index]?.outstandingBalance}</div>
+                    )}
+                  </div>
+                  <div>
+                    <label>How much contributes</label>
+                    <Field type="number" name={`lenders[${index}].contributes`} />
+                    {formik.errors.lenders && formik.errors.lenders[index]?.contributes && (
+                      <div>{formik.errors.lenders[index]?.contributes}</div>
+                    )}
+                  </div>
+                </div>
+              ))}
+              {formik.values.lenders.length < 3 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!formik.values.lenders[0].lender) {
+                      alert('First lender data is required');
+                    } else {
+                      arrayHelpers.push({
+                        lender: '',
+                        outstandingBalance: 0,
+                        contributes: 0,
+                      });
+                    }
+                  }}
+                >
+                  Add another lender
+                </button>
+              )}
+            </div>
+          )}
+        />
+        <button type="submit">Submit</button>
+      </Form>
+    </FormikProvider>
+  );
+};
+
+export default LenderForm;
