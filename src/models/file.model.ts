@@ -2,10 +2,10 @@ import mongoose from "mongoose";
 
 const fileSchema = new mongoose.Schema(
   {
-    mimetype: { type: String, require: true },
-    size: { type: Number, require: true },
-    filename: { type: String, require: true },
-    path: { type: String, require: true },
+    mimetype: { type: String, required: true },
+    size: { type: Number, required: true },
+    filename: { type: String, required: true },
+    path: { type: String, required: true },
   },
   {
     timestamps: true,

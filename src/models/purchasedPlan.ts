@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const planSchema = new mongoose.Schema(
   {
-    limit: { type: Number, require: true },
+    limit: { type: Number, required: true },
     plan: {
       type: mongoose.Schema.Types.ObjectId,
       required: false,
