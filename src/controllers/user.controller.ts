@@ -3,9 +3,11 @@ import catchAsyncError from "../middlewares/catchAsyncErrors";
 import User from "../models/user.model";
 import { ITokenUser } from "../types/jwtAuth";
 import { createAcessToken } from "../utils/jwtToken";
+
+
 export const registerUserController = catchAsyncError(
   async (req, res, next) => {
-    const { email, name, password, home_phone, work_phone } = req.body;
+    const { firstName, lastName, email, password, role } = req.body;
     console.log(req.body);
 
     const existingEmail = await User.findOne({ email });
@@ -21,11 +23,11 @@ export const registerUserController = catchAsyncError(
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
+      firstName,
+      lastName,
+      role,
       email,
-      name,
       password: hashedPassword,
-      home_phone,
-      work_phone,
     });
 
     const tokenPayload: ITokenUser = {
