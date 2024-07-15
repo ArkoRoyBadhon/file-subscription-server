@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 
 import User from "../models/user.model";
 import ErrorHandler from "../utils/errorhandler";
+import sendResponse from "../utils/sendResponse";
 
 export const isAuthenticatedUser = async (
   req: any,
@@ -30,7 +31,13 @@ export const isAuthenticatedUser = async (
     const user = await User.findOne({ _id: decoded?.user?.userId }).select(
       "-password"
     );
-    if (!user) return res.status(400).json({ msg: "User does not exist." });
+    if (!user)
+      return sendResponse(res, {
+        data: null,
+        success: false,
+        statusCode: 404,
+        message: "user not found",
+      });
 
     req.user = user;
 

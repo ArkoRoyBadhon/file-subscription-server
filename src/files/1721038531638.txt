@@ -1,0 +1,79 @@
+import { SafeAreaView, Text } from "react-native";
+import * as SecureStore from "expo-secure-store";
+import { useEffect, useState } from "react";
+import { IShop } from "@/types/shop"; // Adjust the import path according to your project structure
+import { ShopType } from "@/types/bookingType";
+
+const PaymentScreen = () => {
+  const [info, setInfo] = useState<ShopType>({
+    list: [],
+    total: 0,
+    date: "",
+    time: "",
+    team: "",
+    phone: "",
+    notes: "",
+    visit: false,
+    payment: "",
+    status: 0,
+    user_id: "",
+    shop_id: "",
+  });
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const serviceData = await SecureStore.getItemAsync("serviceData");
+        const team = await SecureStore.getItemAsync("team");
+        const dateTime = await SecureStore.getItemAsync("dateTime");
+        const visit = await SecureStore.getItemAsync("visit");
+
+        console.log("service =======", serviceData);
+
+        const newInfo: BoookingInterface = { ...info };
+
+        if (serviceData) {
+          const parsedServiceData: IShop = JSON.parse(serviceData);
+          newInfo.list = parsedServiceData?.bookings.map((booking:any) => ({
+            ...booking,
+            team: booking.team || null,
+            visit: booking.visit === "yes",
+          }));
+        }
+
+        if (team) {
+          newInfo.team = team;
+        }
+
+        if (dateTime) {
+          const data = JSON.parse(dateTime);
+          newInfo.date = data?.date || "";
+          newInfo.time = data?.time || "";
+        }
+
+        if (visit) {
+          newInfo.visit = visit === "yes";
+        }
+
+        setInfo(newInfo);
+        console.log("Fetched data:", newInfo);
+      } catch (error) {
+        console.error("Error fetching data from SecureStore:", error);
+      }
+    };
+
+    getData();
+  }, []);
+
+  return (
+    <SafeAreaView>
+      <Text>Payment Page</Text>
+      <Text>Team: {info.team}</Text>
+      <Text>Date: {info.date}</Text>
+      <Text>Time: {info.time}</Text>
+      <Text>Visit: {info.visit ? "Yes" : "No"}</Text>
+    </SafeAreaView>
+  );
+};
+
+export default PaymentScreen;
