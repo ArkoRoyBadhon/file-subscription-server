@@ -6,6 +6,7 @@ import { createAcessToken, createRefreshToken } from "../utils/jwtToken";
 import sendResponse from "../utils/sendResponse";
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import sendMessage from "../utils/sendMessage";
+import Plan from "../models/plan.model";
 
 export const registerUserController = catchAsyncError(
   async (req, res, next) => {
@@ -24,19 +25,26 @@ export const registerUserController = catchAsyncError(
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const plans = await Plan.find()
+
+    if(!plans) {
+      return res.status(500).json({
+        success: false,
+        statusCode: 500,
+        messsage: "No plans are available"
+      })
+    }
+
+    
+
     const user = await User.create({
       firstName,
       lastName,
       role,
       email,
+      plan: plans[0]?._id,
       password: hashedPassword,
     });
-
-    const tokenPayload: ITokenUser = {
-      email: user.email,
-      role: user.role,
-      userId: user._id.toString(),
-    };
 
 
     const userWithoutPassword = user.toObject();

@@ -8,7 +8,6 @@ import sendResponse from "../utils/sendResponse";
 
 export const accessFileController = catchAsyncError(async (req, res) => {
   const fileId = req.params.fileId;
-  // console.log(fileId);
 
   const isFileExist = await File.findById(fileId);
   if (!isFileExist) {
