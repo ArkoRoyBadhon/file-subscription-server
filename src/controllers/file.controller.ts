@@ -1,12 +1,12 @@
 import fs from "fs";
 import path from "path";
+import cloudinary from "../config/cloud";
 import catchAsyncError from "../middlewares/catchAsyncErrors";
 import File from "../models/file.model";
 import PurchasedPlan from "../models/purchasedPlan";
 import sendResponse from "../utils/sendResponse";
 export const accessFileController = catchAsyncError(async (req, res) => {
   const fileId = req.params.fileId;
-  console.log(fileId);
 
   const isFileExist = await File.findById(fileId);
   if (!isFileExist) {
@@ -33,11 +33,13 @@ export const accessFileController = catchAsyncError(async (req, res) => {
   const file = path.join(__dirname, "..", "files", fileName);
   const planId = req.purchasedPlanId as string;
 
-  await PurchasedPlan.findByIdAndUpdate(
-    planId,
-    { $inc: { limit: -1 } },
-    { new: true }
-  );
+  if (!isFileExist.isFree) {
+    await PurchasedPlan.findByIdAndUpdate(
+      planId,
+      { $inc: { limit: -1 } },
+      { new: true }
+    );
+  }
   res.sendFile(file);
 });
 
@@ -71,7 +73,6 @@ export const deleteFile = catchAsyncError(async (req, res) => {
 
   const filePath = isFileExist.path;
   if (fs.existsSync(filePath)) {
-    // Delete file
     fs.unlinkSync(filePath);
   }
   const delteFile = await File.findByIdAndDelete(isFileExist._id);
@@ -80,5 +81,38 @@ export const deleteFile = catchAsyncError(async (req, res) => {
     success: true,
     data: null,
     statusCode: 200,
+  });
+});
+
+export const getSigninUrl = catchAsyncError(async (req, res) => {
+  const fileId = req.params.fileId;
+  const isFileExist = await File.findById(fileId);
+  if (!isFileExist) {
+    return sendResponse(res, {
+      message: "file not found",
+      success: false,
+      data: null,
+      statusCode: 404,
+    });
+  }
+
+  const publicId = isFileExist.filename.split("Files/")[1];
+  console.log(isFileExist.filename);
+
+  const url = cloudinary.utils.private_download_url(
+    "j6s7lsl8s7insh9gpydq",
+    "mp4",
+    {
+      // type: "private",
+      expires_at: Math.floor(Date.now() / 1000) + 3600, // URL expires in 30sec
+    }
+  );
+
+  console.log(url);
+
+  sendResponse(res, {
+    message: "successfully get signin url",
+    data: url,
+    success: true,
   });
 });

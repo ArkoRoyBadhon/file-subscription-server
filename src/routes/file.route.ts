@@ -1,21 +1,26 @@
 import { Router } from "express";
 import multer from "multer";
-import path from "path";
+
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+
+import cloudinary from "../config/cloud";
 import {
   accessFileController,
   deleteFile,
+  getSigninUrl,
   uploadFile,
 } from "../controllers/file.controller";
 import { authorizeRoles, isAuthenticatedUser } from "../middlewares/auth";
 import { isValidPlanHolder } from "../middlewares/isValidPlanHolder";
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "src/files");
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
+const params = {
+  folder: "Files",
+  resource_type: "auto",
+  type: "private",
+};
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params,
 });
 
 // Multer Upload Instance
@@ -37,8 +42,8 @@ router.get(
 router.post(
   "/upload",
   upload.single("file"),
-  isAuthenticatedUser,
-  authorizeRoles("admin"),
+  // isAuthenticatedUser,
+  // authorizeRoles("admin"),
   uploadFile
 );
 router.delete(
@@ -47,5 +52,8 @@ router.delete(
   authorizeRoles("admin"),
   deleteFile
 );
+
+router.get("/get-signinurl/:fileId", getSigninUrl);
+
 const fileRoute = router;
 export default fileRoute;
