@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
   plan: {
     type: mongoose.Schema.Types.ObjectId,
     required: false,
-    default: "",
+    default: null,
     ref: "purchasedPlan",
   },
   planDate: { type: Date, required: false },

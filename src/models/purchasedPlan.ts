@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const planSchema = new mongoose.Schema({
+const PurchasedSchema = new mongoose.Schema({
   limit: { type: Number, require: true },
   plan: {
     type: mongoose.Schema.Types.ObjectId,
@@ -10,5 +10,5 @@ const planSchema = new mongoose.Schema({
   },
 });
 
-const Plan = mongoose.model("purchasedPlan", planSchema);
-export default Plan;
+const PurchasedPlan = mongoose.model("purchasedPlan", PurchasedSchema);
+export default PurchasedPlan;
