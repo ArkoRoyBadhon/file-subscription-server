@@ -6,7 +6,12 @@ const userSchema = new mongoose.Schema(
     lastName: { type: String, required: true },
     email: { type: String, required: true },
     password: { type: String, required: true },
-    role: { type: String, required: true, enum: ["user", "admin"] },
+    role: {
+      type: String,
+      required: false,
+      default: "user",
+      enum: ["user", "admin"],
+    },
     downloadedItems: [{ type: Schema.Types.ObjectId, ref: "File" }],
     plan: {
       type: mongoose.Schema.Types.ObjectId,
