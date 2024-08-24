@@ -1,4 +1,5 @@
 import { JwtPayload } from "jsonwebtoken";
+import File from "../models/file.model";
 import Plan from "../models/plan.model";
 import PurchasedPlan from "../models/purchasedPlan";
 import sendResponse from "../utils/sendResponse";
@@ -7,6 +8,22 @@ import catchAsyncError from "./catchAsyncErrors";
 export const isValidPlanHolder = catchAsyncError(
   async (req: any, res, next) => {
     const user = req.user as JwtPayload;
+
+    const fileId = req.params.fileId;
+
+    const file = await File.findById(fileId);
+
+    if (!file) {
+      return sendResponse(res, {
+        message: "file not found",
+        data: null,
+        success: true,
+      });
+    }
+
+    if (file.isFree) {
+      return next();
+    }
 
     const purchasedPlan = await PurchasedPlan.findById(user.plan);
     if (!purchasedPlan) {
