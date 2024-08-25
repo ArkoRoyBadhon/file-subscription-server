@@ -23,7 +23,7 @@ export const getAllProductsController = catchAsyncError(
   
         const products = await queryBuilder.modelQuery
           .populate("category")
-          .populate("tag");
+          .populate("tags");
   
         sendResponse(res, {
           statusCode: 200,

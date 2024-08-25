@@ -16,12 +16,10 @@ const productSchema = new mongoose.Schema(
       ref: "Category",
       required: true,
     },
-    tags: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Tag",
-      },
-    ],
+    tags: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Tag",
+    },
     price: {
       type: Number,
       required: true,
@@ -66,4 +64,4 @@ const productSchema = new mongoose.Schema(
 
 const Product = mongoose.model("Product", productSchema);
 
-export default Product
+export default Product;
