@@ -5,6 +5,7 @@ type IResponse<T> = {
   success: boolean;
   message?: string;
   data: T;
+  total?: number;
   error?: any;
 };
 
@@ -14,6 +15,7 @@ const sendResponse = <T>(res: Response, data: IResponse<T>) => {
     statusCode: data.statusCode || 200,
     message: data.message,
     data: data.data,
+    total: data.total
   });
 };
 

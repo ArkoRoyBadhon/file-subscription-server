@@ -16,7 +16,7 @@ export const registerUserController = catchAsyncError(
     const existingEmail = await User.findOne({ email });
     if (existingEmail) {
       return res.json({
-        success: true,
+        success: false,
         duplicate: true,
         message: "email already in used",
         data: null,
