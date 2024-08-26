@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  authSateController,
   forgotPassword,
   genereteAccessToken,
   recoverPassword,
@@ -12,6 +13,7 @@ import { isAuthenticatedUser } from "../middlewares/auth";
 const router = Router();
 router.post("/register", registerUserController);
 router.post("/signin", signinController);
+router.get("/auth-state", isAuthenticatedUser, authSateController);
 router.post("/refreshToken", genereteAccessToken);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);

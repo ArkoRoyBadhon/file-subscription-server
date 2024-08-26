@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createPlanController, getPlansController } from "../controllers/plan.controller";
+import { createPlanController, getPlanByIdController, getPlansController } from "../controllers/plan.controller";
 import { validatePlan } from "../helpers/plan.validator";
 import { authorizeRoles, isAuthenticatedUser } from "../middlewares/auth";
 
@@ -16,6 +16,7 @@ router.get(
   getPlansController
 );
 
+router.get("/get/:planId", getPlanByIdController);
 
 
 const planRoute = router;

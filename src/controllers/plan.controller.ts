@@ -92,3 +92,31 @@ export const deletePlanController = catchAsyncError(async (req, res, next) => {
     data: deletedPlan,
   });
 });
+
+
+export const getPlanByIdController = catchAsyncError(async (req, res, next) => {
+  const { planId } = req.params;
+
+  if (!planId) {
+    return res.status(400).json({
+      success: false,
+      message: "Plan ID is required",
+    });
+  }
+
+  const plan = await Plan.findById(planId);
+
+  if (!plan) {
+    return res.status(404).json({
+      success: false,
+      message: "Plan not found",
+      data: null,
+    });
+  }
+
+  return res.json({
+    success: true,
+    message: "Plan fetched successfully",
+    data: plan,
+  });
+});

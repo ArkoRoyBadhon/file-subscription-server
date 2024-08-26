@@ -20,13 +20,9 @@ const productSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Tag",
     },
-    price: {
-      type: Number,
+    fileUrl: {
+      type: String,
       required: true,
-    },
-    discountPrice: {
-      type: Number,
-      required: false,
     },
     photo: {
       type: String,

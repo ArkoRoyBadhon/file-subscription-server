@@ -99,7 +99,10 @@ export const signinController = catchAsyncError(async (req, res, next) => {
   });
 });
 
-
+export const authSateController = catchAsyncError(async (req, res) => {
+  const user = req.user;
+  res.json({ success: true, message: "User state get", data: user });
+});
 
 export const genereteAccessToken = catchAsyncError(async (req, res) => {
   const getToken = req.header("Authorization");

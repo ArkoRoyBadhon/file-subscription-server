@@ -3,9 +3,10 @@ import Plan from "../models/plan.model";
 import PurchasedPlan from "../models/purchasedPlan";
 import User from "../models/user.model";
 
-export const purchasePlanController = catchAsyncError(async (req, res, next) => {
-    const { userId, planId } = req.body;
-  
+export const purchasePlanController = catchAsyncError(
+  async (req, res, next) => {
+    const { userId, plan: planId, limit } = req.body;
+
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({
@@ -13,7 +14,7 @@ export const purchasePlanController = catchAsyncError(async (req, res, next) => 
         message: "User not found",
       });
     }
-  
+
     const plan = await Plan.findById(planId);
     if (!plan) {
       return res.status(404).json({
@@ -22,30 +23,25 @@ export const purchasePlanController = catchAsyncError(async (req, res, next) => 
       });
     }
 
-    const already = await PurchasedPlan.findOne({plan: planId})
+    const already = await PurchasedPlan.findOne({ userId });
+    const deletePlan = await PurchasedPlan.deleteOne({ userId });
 
-    if (already) {
-        return res.status(400).json({
-          success: false,
-          message: "Already Purchased! Upgrade your subscription!",
-        });
-      }
-  
     const purchasedPlan = await PurchasedPlan.create({
       limit: plan.limit,
       userId: userId,
       plan: planId,
     });
-  
+
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { 
-        plan: purchasedPlan._id, 
-        planDate: new Date() 
+      {
+        // plan: purchasedPlan._id,
+        plan: planId,
+        planDate: new Date(),
       },
       { new: true }
     );
-  
+
     return res.status(200).json({
       success: true,
       message: "Plan purchased successfully",
@@ -54,4 +50,37 @@ export const purchasePlanController = catchAsyncError(async (req, res, next) => 
         purchasedPlan,
       },
     });
-  });
+  }
+);
+
+export const getPurchasedPlansByUserController = catchAsyncError(
+  async (req, res, next) => {
+    if (!req.user || !req.user._id) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID is missing or invalid",
+      });
+    }
+
+    const { _id } = req.user;
+
+    const purchasedPlans = await PurchasedPlan.findOne({
+      userId: _id,
+    })
+    // .populate("plan");
+
+    console.log("dddd", purchasedPlans);
+    
+    if (!purchasedPlans) {
+      return res.status(404).json({
+        success: false,
+        message: "No purchased plans found for this user",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: purchasedPlans,
+    });
+  }
+);
