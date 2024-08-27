@@ -7,6 +7,7 @@ import sendResponse from "../utils/sendResponse";
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import sendMessage from "../utils/sendMessage";
 import Plan from "../models/plan.model";
+import PurchasedPlan from "../models/purchasedPlan";
 
 export const registerUserController = catchAsyncError(
   async (req, res, next) => {
@@ -45,6 +46,20 @@ export const registerUserController = catchAsyncError(
       plan: plans[0]?._id,
       password: hashedPassword,
     });
+
+    const plan = await Plan.find({});
+    if (!plan) {
+      return res.status(404).json({
+        success: false,
+        message: "Plan not found",
+      });
+    }
+
+    const purchase = await PurchasedPlan.create({
+      userId: user._id,
+      plan: plan[0]._id,
+      limit: plan[0].limit
+    })
 
 
     const userWithoutPassword = user.toObject();

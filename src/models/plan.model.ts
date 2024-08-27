@@ -1,6 +1,17 @@
-import mongoose from "mongoose";
+import { Document, Schema, model } from "mongoose";
 
-const planSchema = new mongoose.Schema(
+// Define the Plan interface extending Mongoose's Document
+export interface IPlan extends Document {
+  limit: number;
+  price: number;
+  name: string;
+  expire?: number; 
+  createdAt: Date; 
+  updatedAt: Date; 
+}
+
+// Define the Plan schema
+const planSchema = new Schema<IPlan>(
   {
     limit: { type: Number, required: true },
     price: { type: Number, required: true },
@@ -12,5 +23,6 @@ const planSchema = new mongoose.Schema(
   }
 );
 
-const Plan = mongoose.model("plan", planSchema);
+const Plan = model<IPlan>("Plan", planSchema);
+
 export default Plan;

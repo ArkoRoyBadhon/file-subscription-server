@@ -4,6 +4,8 @@ import {
   updateProductController,
   deleteProductController,
   getAllProductsController,
+  getSingleProductController,
+  downloadProductController,
 } from "../controllers/product.controller";
 
 import { authorizeRoles, isAuthenticatedUser } from "../middlewares/auth";
@@ -11,6 +13,7 @@ import { authorizeRoles, isAuthenticatedUser } from "../middlewares/auth";
 const router = Router();
 
 router.get("/get-all", getAllProductsController);
+router.get("/get/:productId", getSingleProductController);
 
 router.post(
   "/create",
@@ -34,6 +37,8 @@ router.delete(
   authorizeRoles("admin"),
   deleteProductController
 );
+
+router.get("/download/:productId", isAuthenticatedUser, downloadProductController);
 
 const productRoute = router;
 export default productRoute;

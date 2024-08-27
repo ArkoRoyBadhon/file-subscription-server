@@ -1,6 +1,29 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Schema } from 'mongoose';
 
-const productSchema = new mongoose.Schema(
+interface IReview {
+  user: mongoose.Schema.Types.ObjectId;
+  rating: number;
+  comment?: string;
+}
+
+export interface IProduct extends Document {
+  fileName: string;
+  fileType: 'mp4' | 'zip' | 'pdf' | 'mp3' | 'png' | 'svg' | 'jpeg';
+  category: mongoose.Schema.Types.ObjectId;
+  tags?: mongoose.Schema.Types.ObjectId;
+  fileUrl: string;
+  photo: string;
+  description?: string;
+  reviews: IReview[];
+  version?: string;
+  downloadCount: number;
+  stock: number;
+  licenseType?: 'single' | 'multiple' | 'lifetime';
+  createdAt: Date; 
+  updatedAt: Date; 
+}
+
+const productSchema = new Schema<IProduct>(
   {
     fileName: {
       type: String,
@@ -8,17 +31,17 @@ const productSchema = new mongoose.Schema(
     },
     fileType: {
       type: String,
-      enum: ["mp4", "zip", "pdf", "mp3", "png", "svg"],
+      enum: ['mp4', 'zip', 'pdf', 'mp3', 'png', 'svg', 'jpeg'],
       required: true,
     },
     category: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
+      ref: 'Category',
       required: true,
     },
     tags: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Tag",
+      ref: 'Tag',
     },
     fileUrl: {
       type: String,
@@ -33,7 +56,7 @@ const productSchema = new mongoose.Schema(
     },
     reviews: [
       {
-        user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
         rating: { type: Number, min: 1, max: 5 },
         comment: { type: String },
       },
@@ -52,12 +75,12 @@ const productSchema = new mongoose.Schema(
     },
     licenseType: {
       type: String,
-      enum: ["single", "multiple", "lifetime"],
+      enum: ['single', 'multiple', 'lifetime'],
     },
   },
   { timestamps: true }
 );
 
-const Product = mongoose.model("Product", productSchema);
+const Product = mongoose.model<IProduct>('Product', productSchema);
 
 export default Product;

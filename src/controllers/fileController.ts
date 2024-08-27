@@ -17,7 +17,7 @@ export const uploadFile = async (req: Request, res: Response) => {
 
     // Upload file to Supabase storage
     const fileStream = fs.createReadStream(filePath);
-    console.log("fileStream", fileStream);
+    // console.log("fileStream", fileStream);
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from(bucket)
       .upload(`user-files/${fileName}`, fileStream, {
@@ -25,7 +25,7 @@ export const uploadFile = async (req: Request, res: Response) => {
         upsert: false,
       });
 
-      console.log("uploadData", uploadData);
+      // console.log("uploadData", uploadData);
       
     if (uploadError) {
       console.error("Error uploading file:", uploadError);

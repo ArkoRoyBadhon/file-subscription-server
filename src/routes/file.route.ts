@@ -64,8 +64,9 @@
 
 
 import express from 'express';
-import { uploadFile } from '../controllers/fileController';
+// import { uploadFile } from '../controllers/fileController';
 import multer from 'multer';
+import { uploadFile } from '../controllers/fileController';
 // import upload from '../config/multerConfig';
 
 const router = express.Router();

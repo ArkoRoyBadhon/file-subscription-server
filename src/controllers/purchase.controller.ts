@@ -69,7 +69,6 @@ export const getPurchasedPlansByUserController = catchAsyncError(
     })
     // .populate("plan");
 
-    console.log("dddd", purchasedPlans);
     
     if (!purchasedPlans) {
       return res.status(404).json({

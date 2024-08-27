@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema(
       default: "user",
       enum: ["user", "admin"],
     },
-    downloadedItems: { type: Number, ref: "File" },
+    downloadedItems: { type: Number, default: 0 },
     plan: {
       type: mongoose.Schema.Types.ObjectId,
       required: false,
