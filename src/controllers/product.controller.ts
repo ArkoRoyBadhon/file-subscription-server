@@ -7,8 +7,8 @@ import sendResponse from "../utils/sendResponse";
 import path from "path";
 import fs from "fs";
 import Plan from "../models/plan.model";
-import Tag from "../models/tag.model";
 import User from "../models/user.model";
+import DownloadedModel from "../models/downloadedFile.model";
 
 export const getAllProductsController = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -50,7 +50,6 @@ export const getAllProductsController = catchAsyncError(
   }
 );
 
-// Controller to create a new product
 export const createProductController = catchAsyncError(
   async (req, res, next) => {
     try {
@@ -73,7 +72,6 @@ export const createProductController = catchAsyncError(
   }
 );
 
-// Controller to update a product
 export const updateProductController = catchAsyncError(
   async (req, res, next) => {
     try {
@@ -111,7 +109,6 @@ export const updateProductController = catchAsyncError(
   }
 );
 
-// Controller to delete a product
 export const deleteProductController = catchAsyncError(
   async (req, res, next) => {
     try {
@@ -146,7 +143,6 @@ export const getSingleProductController = catchAsyncError(
     try {
       const { productId } = req.params;
 
-      // Find the product by ID and populate any necessary fields
       const product = await Product.findById(productId)
         .populate("category")
         .populate("tags");
@@ -216,7 +212,6 @@ export const downloadProductController = catchAsyncError(
       });
     }
 
-    // Fetch the product by ID
     const product = await Product.findById(productId).populate("tags");
 
     if (!product) {
@@ -228,7 +223,6 @@ export const downloadProductController = catchAsyncError(
       });
     }
 
-    // Fetch the purchase record for the product by the user
     const purchase = await Purchase.findOne({ userId });
 
     if (!purchase) {
@@ -298,6 +292,24 @@ export const downloadProductController = catchAsyncError(
         });
       }
     }
+
+    const payload = {
+      filename: product.fileName,
+      fileType: product.fileType,
+      photo: product.photo,
+      user: userId,
+    }
+
+    await DownloadedModel.create(payload)
+
+    // if(purchase.limit <= 0) {
+    //   return sendResponse(res, {
+    //     statusCode: 500,
+    //     success: false,
+    //     message: "Subscription Limit Finished",
+    //     data: null,
+    //   });
+    // }
 
     const filePath = path.join(
       __dirname,

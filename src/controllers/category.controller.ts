@@ -1,7 +1,6 @@
 import catchAsyncError from "../middlewares/catchAsyncErrors";
 import Category from "../models/category.model";
 
-// Create a new category
 export const createCategoryController = catchAsyncError(async (req, res, next) => {
   const { label, value } = req.body;
   
@@ -13,7 +12,6 @@ export const createCategoryController = catchAsyncError(async (req, res, next) =
   });
 });
 
-// Get all categories
 export const getCategoriesController = catchAsyncError(async (req, res, next) => {
   const categories = await Category.find();
 
@@ -23,7 +21,6 @@ export const getCategoriesController = catchAsyncError(async (req, res, next) =>
   });
 });
 
-// Update a category
 export const updateCategoryController = catchAsyncError(async (req, res, next) => {
   const { id } = req.params;
   const { label, value } = req.body;
@@ -43,7 +40,6 @@ export const updateCategoryController = catchAsyncError(async (req, res, next) =
   });
 });
 
-// Delete a category
 export const deleteCategoryController = catchAsyncError(async (req, res, next) => {
   const { id } = req.params;
 

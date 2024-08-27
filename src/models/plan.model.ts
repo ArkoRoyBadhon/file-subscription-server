@@ -1,6 +1,5 @@
 import { Document, Schema, model } from "mongoose";
 
-// Define the Plan interface extending Mongoose's Document
 export interface IPlan extends Document {
   limit: number;
   price: number;
@@ -10,7 +9,6 @@ export interface IPlan extends Document {
   updatedAt: Date; 
 }
 
-// Define the Plan schema
 const planSchema = new Schema<IPlan>(
   {
     limit: { type: Number, required: true },

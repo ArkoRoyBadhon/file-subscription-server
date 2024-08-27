@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import fs from "fs";
 import supabase from "../config/supabaseClient";
 
-// Upload file to Supabase and save metadata to MongoDB
 export const uploadFile = async (req: Request, res: Response) => {
   try {
     if (!req.file) {
@@ -32,7 +31,6 @@ export const uploadFile = async (req: Request, res: Response) => {
       return res.status(500).json({ error: "Error uploading file" });
     }
 
-    // Get public URL for the uploaded file
     const { data: publicUrlData, error: urlError }: any = supabase.storage
       .from(bucket)
       .getPublicUrl(`user-files/${fileName}`);

@@ -1,7 +1,6 @@
 import catchAsyncError from "../middlewares/catchAsyncErrors";
 import Tag from "../models/tag.model";
 
-// Create a new tag
 export const createTagController = catchAsyncError(async (req, res, next) => {
   const { label, value } = req.body;
 
@@ -13,7 +12,6 @@ export const createTagController = catchAsyncError(async (req, res, next) => {
   });
 });
 
-// Get all tags
 export const getTagsController = catchAsyncError(async (req, res, next) => {
   const tags = await Tag.find();
 
@@ -23,7 +21,6 @@ export const getTagsController = catchAsyncError(async (req, res, next) => {
   });
 });
 
-// Update a tag
 export const updateTagController = catchAsyncError(async (req, res, next) => {
   const { id } = req.params;
   const { label, value } = req.body;
@@ -43,7 +40,6 @@ export const updateTagController = catchAsyncError(async (req, res, next) => {
   });
 });
 
-// Delete a tag
 export const deleteTagController = catchAsyncError(async (req, res, next) => {
   const { id } = req.params;
 

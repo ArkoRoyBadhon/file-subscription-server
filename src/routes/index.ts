@@ -7,6 +7,7 @@ import productRoute from "./product.route";
 import categoryRoute from "./category.route";
 import tagRoute from "./tag.route";
 import paymentRoutes from "./payment.route";
+import userDownloadRoutes from "./download.route";
 
 const router = express.Router();
 
@@ -42,6 +43,10 @@ const moduleRoute = [
   {
     path: "/payment",
     route: paymentRoutes,
+  },
+  {
+    path: "/download",
+    route: userDownloadRoutes,
   },
 ];
 

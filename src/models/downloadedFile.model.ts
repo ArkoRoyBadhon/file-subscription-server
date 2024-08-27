@@ -1,13 +1,21 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 
-const downloadedFiles = new mongoose.Schema(
+export interface IDownloadedFile extends Document {
+  filename: string;
+  fileType: string;
+  photo: string;
+  user: mongoose.Schema.Types.ObjectId; 
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const downloadedFileSchema = new Schema<IDownloadedFile>(
   {
-    mimetype: { type: String, required: true },
-    size: { type: Number, required: true },
     filename: { type: String, required: true },
-    path: { type: String, required: true },
+    fileType: { type: String, required: true },
+    photo: { type: String, required: true },
     user: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       required: true,
       ref: "user",
     },
@@ -17,5 +25,9 @@ const downloadedFiles = new mongoose.Schema(
   }
 );
 
-const DownloadedFile = mongoose.model("downloadedFiles", downloadedFiles);
+const DownloadedFile = mongoose.model<IDownloadedFile>(
+  "DownloadedModel",
+  downloadedFileSchema
+);
+
 export default DownloadedFile;
