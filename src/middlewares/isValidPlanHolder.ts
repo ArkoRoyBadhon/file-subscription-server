@@ -1,78 +1,78 @@
-import { JwtPayload } from "jsonwebtoken";
-import File from "../models/file.model";
-import Plan from "../models/plan.model";
-import PurchasedPlan from "../models/purchasedPlan";
-import sendResponse from "../utils/sendResponse";
-import catchAsyncError from "./catchAsyncErrors";
+// import { JwtPayload } from "jsonwebtoken";
+// import File from "../models/file.model";
+// import Plan from "../models/plan.model";
+// import PurchasedPlan from "../models/purchasedPlan";
+// import sendResponse from "../utils/sendResponse";
+// import catchAsyncError from "./catchAsyncErrors";
 
-export const isValidPlanHolder = catchAsyncError(
-  async (req: any, res, next) => {
-    const user = req.user as JwtPayload;
+// export const isValidPlanHolder = catchAsyncError(
+//   async (req: any, res, next) => {
+//     const user = req.user as JwtPayload;
 
-    const fileId = req.params.fileId;
+//     const fileId = req.params.fileId;
 
-    const file = await File.findById(fileId);
+//     const file = await File.findById(fileId);
 
-    if (!file) {
-      return sendResponse(res, {
-        message: "file not found",
-        data: null,
-        success: true,
-      });
-    }
+//     if (!file) {
+//       return sendResponse(res, {
+//         message: "file not found",
+//         data: null,
+//         success: true,
+//       });
+//     }
 
-    if (file.isFree) {
-      return next();
-    }
+//     if (file.isFree) {
+//       return next();
+//     }
 
-    const purchasedPlan = await PurchasedPlan.findById(user.plan);
-    if (!purchasedPlan) {
-      return sendResponse(res, {
-        data: null,
-        message: "no plan found",
-        success: false,
-        statusCode: 404,
-      });
-    }
+//     const purchasedPlan = await PurchasedPlan.findById(user.plan);
+//     if (!purchasedPlan) {
+//       return sendResponse(res, {
+//         data: null,
+//         message: "no plan found",
+//         success: false,
+//         statusCode: 404,
+//       });
+//     }
 
-    const plan = await Plan.findById(purchasedPlan.plan);
+//     const plan = await Plan.findById(purchasedPlan.plan);
 
-    if (!plan) {
-      return sendResponse(res, {
-        data: null,
-        message: "no plan found",
-        success: false,
-        statusCode: 404,
-      });
-    }
+//     if (!plan) {
+//       return sendResponse(res, {
+//         data: null,
+//         message: "no plan found",
+//         success: false,
+//         statusCode: 404,
+//       });
+//     }
 
-    if (!purchasedPlan.limit) {
-      return sendResponse(res, {
-        data: null,
-        success: false,
-        statusCode: 403,
-        message: "You have reached your plan limit",
-      });
-    }
+//     if (!purchasedPlan.limit) {
+//       return sendResponse(res, {
+//         data: null,
+//         success: false,
+//         statusCode: 403,
+//         message: "You have reached your plan limit",
+//       });
+//     }
 
-    const purchaseDate = new Date(purchasedPlan.createdAt);
+//     const purchaseDate = new Date(purchasedPlan.createdAt);
 
-    const expiryDate = new Date(purchaseDate);
-    expiryDate.setDate(expiryDate.getDate() + (plan.expire || 0));
+//     const expiryDate = new Date(purchaseDate);
+//     expiryDate.setDate(expiryDate.getDate() + (plan.expire || 0));
 
-    const currentDate = new Date();
+//     const currentDate = new Date();
 
-    if (plan.expire && currentDate > expiryDate) {
-      return sendResponse(res, {
-        data: null,
-        success: false,
-        statusCode: 403,
-        message: "Plan has been expired",
-      });
-    }
+//     if (plan.expire && currentDate > expiryDate) {
+//       return sendResponse(res, {
+//         data: null,
+//         success: false,
+//         statusCode: 403,
+//         message: "Plan has been expired",
+//       });
+//     }
 
-    req.purchasedPlanId = purchasedPlan._id;
+//     req.purchasedPlanId = purchasedPlan._id;
 
-    next();
-  }
-);
+//     next();
+//   }
+// );

@@ -6,8 +6,9 @@ import { createAcessToken, createRefreshToken } from "../utils/jwtToken";
 import sendResponse from "../utils/sendResponse";
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import sendMessage from "../utils/sendMessage";
-import Plan from "../models/plan.model";
-import PurchasedPlan from "../models/purchasedPlan";
+import Stripe from "stripe";
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+
 
 export const registerUserController = catchAsyncError(
   async (req, res, next) => {
@@ -25,41 +26,19 @@ export const registerUserController = catchAsyncError(
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    const plans = await Plan.find()
-
-    if(!plans) {
-      return res.status(500).json({
-        success: false,
-        statusCode: 500,
-        messsage: "No plans are available"
-      })
-    }
-
-    
+    const customer = await stripe.customers.create({
+      email,
+    });
 
     const user = await User.create({
       firstName,
       lastName,
       role,
       email,
-      plan: plans[0]?._id,
       password: hashedPassword,
+      stripe_customer_id: customer.id,
     });
 
-    const plan = await Plan.find({});
-    if (!plan) {
-      return res.status(404).json({
-        success: false,
-        message: "Plan not found",
-      });
-    }
-
-    const purchase = await PurchasedPlan.create({
-      userId: user._id,
-      plan: plan[0]._id,
-      limit: plan[0].limit
-    })
 
 
     const userWithoutPassword = user.toObject();

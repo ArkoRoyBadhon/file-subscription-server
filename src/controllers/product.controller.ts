@@ -2,11 +2,11 @@ import { NextFunction, Request, Response } from "express";
 import QueryBuilder from "../builder/QueryBuilder";
 import catchAsyncError from "../middlewares/catchAsyncErrors";
 import Product from "../models/product.model";
-import Purchase from "../models/purchasedPlan";
+// import Purchase from "../models/purchasedPlan";
 import sendResponse from "../utils/sendResponse";
 import path from "path";
 import fs from "fs";
-import Plan from "../models/plan.model";
+// import Plan from "../models/plan.model";
 import User from "../models/user.model";
 import DownloadedModel from "../models/downloadedFile.model";
 
@@ -189,157 +189,149 @@ const getMimeType = (fileType: string) => {
   return mimeTypes[fileType] || "application/octet-stream";
 };
 
-export const downloadProductController = catchAsyncError(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { productId } = req.params;
-    if (!req.user || !req.user._id) {
-      return res.status(400).json({
-        success: false,
-        message: "User ID is missing or invalid",
-      });
-    }
+// export const downloadProductController = catchAsyncError(
+//   async (req: Request, res: Response, next: NextFunction) => {
+//     const { productId } = req.params;
+//     if (!req.user || !req.user._id) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "User ID is missing or invalid",
+//       });
+//     }
 
-    const { _id: userId } = req.user;
+//     const { _id: userId } = req.user;
 
-    const UserMain = await User.findById(userId);
+//     const UserMain = await User.findById(userId);
 
-    if (!UserMain) {
-      return sendResponse(res, {
-        statusCode: 404,
-        success: false,
-        message: "User not found",
-        data: null,
-      });
-    }
+//     if (!UserMain) {
+//       return sendResponse(res, {
+//         statusCode: 404,
+//         success: false,
+//         message: "User not found",
+//         data: null,
+//       });
+//     }
 
-    const product = await Product.findById(productId).populate("tags");
+//     const product = await Product.findById(productId).populate("tags");
 
-    if (!product) {
-      return sendResponse(res, {
-        statusCode: 404,
-        success: false,
-        message: "Product not found",
-        data: null,
-      });
-    }
+//     if (!product) {
+//       return sendResponse(res, {
+//         statusCode: 404,
+//         success: false,
+//         message: "Product not found",
+//         data: null,
+//       });
+//     }
 
-    const purchase = await Purchase.findOne({ userId });
+//     const purchase = await Purchase.findOne({ userId });
 
-    if (!purchase) {
-      return sendResponse(res, {
-        statusCode: 403,
-        success: false,
-        message: "No purchase record found for you",
-        data: null,
-      });
-    }
+//     if (!purchase) {
+//       return sendResponse(res, {
+//         statusCode: 403,
+//         success: false,
+//         message: "No purchase record found for you",
+//         data: null,
+//       });
+//     }
 
-    const subscribePlan = await Plan.findById(purchase.plan);
+//     const subscribePlan = await Plan.findById(purchase.plan);
 
-    if (!subscribePlan) {
-      return sendResponse(res, {
-        statusCode: 403,
-        success: false,
-        message: "Subscription plan not found",
-        data: null,
-      });
-    }
+//     if (!subscribePlan) {
+//       return sendResponse(res, {
+//         statusCode: 403,
+//         success: false,
+//         message: "Subscription plan not found",
+//         data: null,
+//       });
+//     }
 
-    const expirationDate = new Date(purchase.createdAt);
+//     const expirationDate = new Date(purchase.createdAt);
 
-    expirationDate.setDate(expirationDate.getDate() + subscribePlan.expire!);
+//     expirationDate.setDate(expirationDate.getDate() + subscribePlan.expire!);
 
 
-    if (new Date() > expirationDate) {
-      return sendResponse(res, {
-        statusCode: 403,
-        success: false,
-        message: "Subscription has expired",
-        data: null,
-      });
-    }
+//     if (new Date() > expirationDate) {
+//       return sendResponse(res, {
+//         statusCode: 403,
+//         success: false,
+//         message: "Subscription has expired",
+//         data: null,
+//       });
+//     }
 
-    product.downloadCount = (product.downloadCount || 0) + 1;
-    await product.save();
+//     product.downloadCount = (product.downloadCount || 0) + 1;
+//     await product.save();
 
-    // @ts-ignore
-    if (product.tags?.label === "Premium") {
-      if (UserMain.downloadedItems! >= subscribePlan.limit) {
-        return sendResponse(res, {
-          statusCode: 403,
-          success: false,
-          message: "Download limit exceeded",
-          data: null,
-        });
-      }
+//     // @ts-ignore
+//     if (product.tags?.label === "Premium") {
+//       if (UserMain.downloadedItems! >= subscribePlan.limit) {
+//         return sendResponse(res, {
+//           statusCode: 403,
+//           success: false,
+//           message: "Download limit exceeded",
+//           data: null,
+//         });
+//       }
 
-      UserMain.downloadedItems! += 1;
-      await UserMain.save();
+//       UserMain.downloadedItems! += 1;
+//       await UserMain.save();
 
-      // purchase.limit -= 1;
-      // await purchase.save();
+//       // purchase.limit -= 1;
+//       // await purchase.save();
 
-      await Purchase.findByIdAndUpdate(purchase._id, {
-        limit: purchase.limit -1
-      })
+//       await Purchase.findByIdAndUpdate(purchase._id, {
+//         limit: purchase.limit -1
+//       })
 
-      if(purchase.limit <= 0) {
-        return sendResponse(res, {
-          statusCode: 500,
-          success: false,
-          message: "Subscription Limit Finished",
-          data: null,
-        });
-      }
-    }
+//       if(purchase.limit <= 0) {
+//         return sendResponse(res, {
+//           statusCode: 500,
+//           success: false,
+//           message: "Subscription Limit Finished",
+//           data: null,
+//         });
+//       }
+//     }
 
-    const payload = {
-      filename: product.fileName,
-      fileType: product.fileType,
-      photo: product.photo,
-      user: userId,
-    }
+//     const payload = {
+//       filename: product.fileName,
+//       fileType: product.fileType,
+//       photo: product.photo,
+//       user: userId,
+//     }
 
-    await DownloadedModel.create(payload)
+//     await DownloadedModel.create(payload)
 
-    // if(purchase.limit <= 0) {
-    //   return sendResponse(res, {
-    //     statusCode: 500,
-    //     success: false,
-    //     message: "Subscription Limit Finished",
-    //     data: null,
-    //   });
-    // }
 
-    const filePath = path.join(
-      __dirname,
-      "..",
-      "..",
-      "uploads",
-      product.fileUrl
-    );
+//     const filePath = path.join(
+//       __dirname,
+//       "..",
+//       "..",
+//       "uploads",
+//       product.fileUrl
+//     );
 
-    // console.log("Attempting to download file at:", filePath);
+//     // console.log("Attempting to download file at:", filePath);
 
-    if (!fs.existsSync(filePath)) {
-      return sendResponse(res, {
-        statusCode: 404,
-        success: false,
-        message: "File not found",
-        data: null,
-      });
-    }
+//     if (!fs.existsSync(filePath)) {
+//       return sendResponse(res, {
+//         statusCode: 404,
+//         success: false,
+//         message: "File not found",
+//         data: null,
+//       });
+//     }
 
-    const fileExtension = `.${product.fileType}`;
-    const fileNameWithExtension = `${product.fileName}${fileExtension}`;
+//     const fileExtension = `.${product.fileType}`;
+//     const fileNameWithExtension = `${product.fileName}${fileExtension}`;
 
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename="${fileNameWithExtension}"`
-    );
-    res.setHeader("Content-Type", getMimeType(product.fileType));
+//     res.setHeader(
+//       "Content-Disposition",
+//       `attachment; filename="${fileNameWithExtension}"`
+//     );
+//     res.setHeader("Content-Type", getMimeType(product.fileType));
 
-    const fileStream = fs.createReadStream(filePath);
-    fileStream.pipe(res);
-  }
-);
+//     const fileStream = fs.createReadStream(filePath);
+//     fileStream.pipe(res);
+//   }
+// );

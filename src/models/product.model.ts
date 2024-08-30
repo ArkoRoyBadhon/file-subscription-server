@@ -1,5 +1,12 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
+interface ITag {
+  _id: mongoose.Schema.Types.ObjectId;
+  label: string;
+  value: string;
+}
+
+
 interface IReview {
   user: mongoose.Schema.Types.ObjectId;
   rating: number;
@@ -10,7 +17,7 @@ export interface IProduct extends Document {
   fileName: string;
   fileType: 'mp4' | 'zip' | 'pdf' | 'mp3' | 'png' | 'svg' | 'jpeg';
   category: mongoose.Schema.Types.ObjectId;
-  tags?: mongoose.Schema.Types.ObjectId;
+  tags?: mongoose.Schema.Types.ObjectId | ITag;
   fileUrl: string;
   photo: string;
   description?: string;

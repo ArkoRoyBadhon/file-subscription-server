@@ -5,7 +5,7 @@ import {
   deleteProductController,
   getAllProductsController,
   getSingleProductController,
-  downloadProductController,
+  // downloadProductController,
 } from "../controllers/product.controller";
 
 import { authorizeRoles, isAuthenticatedUser } from "../middlewares/auth";
@@ -38,7 +38,7 @@ router.delete(
   deleteProductController
 );
 
-router.get("/download/:productId", isAuthenticatedUser, downloadProductController);
+// router.get("/download/:productId", isAuthenticatedUser, downloadProductController);
 
 const productRoute = router;
 export default productRoute;

@@ -13,13 +13,8 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin"],
     },
     downloadedItems: { type: Number, default: 0 },
-    plan: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: false,
-      default: null,
-      ref: "purchasedPlan",
-    },
-    planDate: { type: Date, required: false },
+    stripe_customer_id: String,
+    subscriptions: [],
   },
   {
     timestamps: true,
